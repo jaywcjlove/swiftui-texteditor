@@ -52,13 +52,29 @@ extension EnvironmentValues {
 }
 
 public enum TextViewComponent {
+    /// Is the editor editable?
     case isEditable
+    /// Set editor padding
     case insetPadding
+    /// Set the editor background color.
     case backgroundColor
 }
 
 @available(iOS 13.0, macOS 10.15, *)
 public extension View {
+    /// Manipulate attributed strings with attributes such as visual styles, hyperlinks, or accessibility data for portions of the text.
+    ///
+    /// ```swift
+    /// TextEditorPlus(text: $text)
+    ///     .textSetting(isEditable, for: .isEditable)
+    ///     .textViewAttributedString(action: { val in
+    ///             let style = NSMutableParagraphStyle()
+    ///             style.lineSpacing = 5
+    ///             style.lineHeightMultiple = 1.2
+    ///             val.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: val.length))
+    ///             return val
+    ///     })
+    /// ````
     @ViewBuilder func textViewAttributedString(action: @escaping (NSMutableAttributedString) -> NSMutableAttributedString?) -> some View {
         environment(\.textViewAttributedString, action)
     }

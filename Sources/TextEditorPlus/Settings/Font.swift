@@ -8,11 +8,11 @@
 import SwiftUI
 
 #if os(OSX)
-    import AppKit
-    public typealias FontHelper = NSFont
+import AppKit
+public typealias FontHelper = NSFont
 #elseif os(iOS)
-    import UIKit
-    public typealias FontHelper = UIFont
+import UIKit
+public typealias FontHelper = UIFont
 #endif
 
 @propertyWrapper

@@ -47,9 +47,6 @@ extension TextEditorPlus {
             guard let textView = notification.object as? NSTextView else {
                 return
             }
-            if let textDidBeginEditing = self.parent.textDidBeginEditing {
-                textDidBeginEditing(textView.string) // 调用闭包
-            }
             self.parent.text = textView.string
             self.selectedRanges = textView.selectedRanges
         }

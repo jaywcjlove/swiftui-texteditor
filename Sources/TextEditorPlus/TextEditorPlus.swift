@@ -4,11 +4,11 @@
 import SwiftUI
 
 #if os(OSX)
-    import AppKit
-    public typealias ViewRepresentable = NSViewRepresentable
+import AppKit
+private typealias ViewRepresentable = NSViewRepresentable
 #elseif os(iOS)
-    import UIKit
-    public typealias ViewRepresentable = UIViewRepresentable
+import UIKit
+private typealias ViewRepresentable = UIViewRepresentable
 #endif
 
 
@@ -22,8 +22,6 @@ public struct TextEditorPlus: ViewRepresentable {
     @Environment(\.colorScheme) var colorScheme
     @Font var font: FontHelper = .systemFont(ofSize: 14, weight: .regular)
     
-    public var textDidBeginEditing: ((String) -> Void)? // 添加一个闭包属性
-
     public init(text: Binding<String>) {
         self._text = text
     }
@@ -42,6 +40,7 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.font = font
         textView.layer.borderWidth = 1.0
         textView.layer.borderColor = UIColor.red.cgColor
+        textView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         // 解决边距问题
         textView.textContainerInset = UIEdgeInsets(top: insetPadding, left: insetPadding, bottom: insetPadding, right: insetPadding)
         return textView
@@ -53,6 +52,7 @@ public struct TextEditorPlus: ViewRepresentable {
         uiView.font = font
         uiView.textContainerInset = UIEdgeInsets(top: insetPadding, left: insetPadding, bottom: insetPadding, right: insetPadding)
         
+        uiView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         
         let attributedString = NSMutableAttributedString(string: text)
         let nsColor = colorScheme == .dark ? UIColor.white : UIColor.black
@@ -95,9 +95,14 @@ public struct TextEditorPlus: ViewRepresentable {
         
         let textView = NSTextView(frame: .zero, textContainer: textContainer)
         textView.autoresizingMask        = .width
-        textView.backgroundColor         = NSColor.clear
-        // 指示接收者是否绘制其背景
-        textView.drawsBackground         = false
+        if let bgColor = textViewBackgroundColor {
+            textView.backgroundColor         = bgColor
+            textView.drawsBackground         = true
+        } else {
+            textView.backgroundColor         = NSColor.clear
+            // 指示接收者是否绘制其背景
+            textView.drawsBackground         = false
+        }
         textView.isEditable              = isEditable
         textView.isHorizontallyResizable = false
         textView.isRichText              = false
@@ -125,6 +130,15 @@ public struct TextEditorPlus: ViewRepresentable {
             textView.string = text
             if context.coordinator.selectedRanges.count > 0 {
                 textView.selectedRanges = context.coordinator.selectedRanges
+            }
+            
+            if let bgColor = textViewBackgroundColor {
+                textView.backgroundColor         = bgColor
+                textView.drawsBackground         = true
+            } else {
+                textView.backgroundColor         = NSColor.clear
+                // 指示接收者是否绘制其背景
+                textView.drawsBackground         = false
             }
             
             textView.isEditable = isEditable
