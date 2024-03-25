@@ -12,6 +12,57 @@ private typealias ViewRepresentable = UIViewRepresentable
 #endif
 
 
+/// An enhanced version similar to `TextEditor`, aimed at maintaining consistency in its usage across iOS and macOS platforms.
+///
+/// ```swift
+/// import TextEditorPlus
+///
+/// struct ContentView: View {
+///     @State var text = """
+///     Hello World
+///     """
+///     @State var isEditable = true
+///     var body: some View {
+///         TextEditorPlus(text: $text)
+///             .textSetting(isEditable, for: .isEditable)
+///     }
+/// }
+/// ```
+///
+/// Set text weight and size:
+///
+/// ```swift
+/// TextEditorPlus(text: $text)
+///     .font(.systemFont(ofSize: 24, weight: .regular))
+/// ```
+///
+/// Set editor padding:
+///
+/// ```swift
+/// TextEditorPlus(text: $text)
+///   .textSetting(23, for: .insetPadding)
+/// ```
+///
+/// Set editor background color:
+///
+/// ```swift
+/// TextEditorPlus(text: $text)
+///   .textSetting(NSColor.red, for: .backgroundColor)
+/// ```
+/// 
+/// Manipulate attributed strings with attributes such as visual styles, hyperlinks, or accessibility data for portions of the text.
+///
+/// ```swift
+/// TextEditorPlus(text: $text)
+///     .textSetting(isEditable, for: .isEditable)
+///     .textViewAttributedString(action: { val in
+///             let style = NSMutableParagraphStyle()
+///             style.lineSpacing = 5
+///             style.lineHeightMultiple = 1.2
+///             val.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: val.length))
+///             return val
+///     })
+/// ````
 @available(iOS 13.0, macOS 10.15, *)
 public struct TextEditorPlus: ViewRepresentable {
     @Binding var text: String

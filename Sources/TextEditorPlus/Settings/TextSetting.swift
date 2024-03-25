@@ -87,8 +87,8 @@ public extension View {
     /// ```
     ///
     /// - Parameters:
-    ///   - tint: The tint color to apply.
-    ///   - component: The tintable component to apply the tint color.
+    ///   - value: The value of the component attribute.
+    ///   - component: Specify the component's attribute.
     @ViewBuilder func textSetting<T>(_ value: T, for component: TextViewComponent) -> some View {
         switch component {
             case .isEditable:
