@@ -90,8 +90,6 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.delegate = context.coordinator
         textView.text = text
         textView.font = font
-        textView.layer.borderWidth = 1.0
-        textView.layer.borderColor = UIColor.red.cgColor
         textView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         textView.placeholderString = placeholderString ?? ""
         textView.placeholderFont = font
