@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D4E4F192BB2E5AF003B3098 /* PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E4F182BB2E5AF003B3098 /* PlaceholderView.swift */; };
 		7DAB5BE42BB0ABA200B5146A /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAB5BE32BB0ABA200B5146A /* ExampleApp.swift */; };
 		7DAB5BE62BB0ABA200B5146A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAB5BE52BB0ABA200B5146A /* ContentView.swift */; };
 		7DAB5BE82BB0ABA500B5146A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DAB5BE72BB0ABA500B5146A /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7D4E4F182BB2E5AF003B3098 /* PlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderView.swift; sourceTree = "<group>"; };
 		7DAB5BE02BB0ABA200B5146A /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DAB5BE32BB0ABA200B5146A /* ExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
 		7DAB5BE52BB0ABA200B5146A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				7DAB5BF72BB0AF8F00B5146A /* ExampleView.swift */,
 				7DAB5BF92BB16B0D00B5146A /* FontExampleView.swift */,
 				7DC471092BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift */,
+				7D4E4F182BB2E5AF003B3098 /* PlaceholderView.swift */,
 			);
 			path = Examples;
 			sourceTree = "<group>";
@@ -173,6 +176,7 @@
 			files = (
 				7DAB5BE62BB0ABA200B5146A /* ContentView.swift in Sources */,
 				7DAB5BE42BB0ABA200B5146A /* ExampleApp.swift in Sources */,
+				7D4E4F192BB2E5AF003B3098 /* PlaceholderView.swift in Sources */,
 				7DAB5BFA2BB16B0D00B5146A /* FontExampleView.swift in Sources */,
 				7DC4710A2BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift in Sources */,
 				7DAB5BF82BB0AF9000B5146A /* ExampleView.swift in Sources */,

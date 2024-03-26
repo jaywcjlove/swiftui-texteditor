@@ -61,6 +61,14 @@ TextEditorPlus(text: $text)
   .textSetting(NSColor.red, for: .backgroundColor)
 ```
 
+Set editor placeholder string:
+
+```swift
+TextEditorPlus(text: $text)
+    .font(.systemFont(ofSize: CGFloat(Float(fontSize)!), weight: .regular))
+    .textSetting("Test placeholder string", for: .placeholderString)
+```
+
 Manipulate attributed strings with attributes such as visual styles, hyperlinks, or accessibility data for portions of the text.
 
 ```swift

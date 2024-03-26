@@ -25,6 +25,9 @@ fileprivate struct TextViewInsetPadding: EnvironmentKey {
 fileprivate struct TextViewBackgroundColor: EnvironmentKey {
     static var defaultValue: ViewColor?
 }
+fileprivate struct TextViewPlaceholderString: EnvironmentKey {
+    static var defaultValue: String?
+}
 
 fileprivate struct TextViewAttributedString: EnvironmentKey {
     static var defaultValue: (NSMutableAttributedString) -> NSMutableAttributedString? = { _ in nil }
@@ -49,6 +52,10 @@ extension EnvironmentValues {
         get { self[TextViewAttributedString.self] }
         set { self[TextViewAttributedString.self] = newValue }
     }
+    var textViewPlaceholderString: String? {
+        get { self[TextViewPlaceholderString.self] }
+        set { self[TextViewPlaceholderString.self] = newValue }
+    }
 }
 
 public enum TextViewComponent {
@@ -58,6 +65,8 @@ public enum TextViewComponent {
     case insetPadding
     /// Set the editor background color.
     case backgroundColor
+    /// Set editor placeholder
+    case placeholderString
 }
 
 @available(iOS 13.0, macOS 10.15, *)
@@ -97,6 +106,8 @@ public extension View {
                 environment(\.textViewInsetPadding, value as! CGFloat)
             case .backgroundColor:
                 environment(\.textViewBackgroundColor, value as! ViewColor?)
+            case .placeholderString:
+                environment(\.textViewPlaceholderString, value as! String?)
         }
     }
 }

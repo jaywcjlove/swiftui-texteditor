@@ -70,6 +70,7 @@ public struct TextEditorPlus: ViewRepresentable {
     @Environment(\.textViewInsetPadding) private var insetPadding
     @Environment(\.textViewAttributedString) private var textViewAttributedString
     @Environment(\.textViewBackgroundColor) private var textViewBackgroundColor
+    @Environment(\.textViewPlaceholderString) private var placeholderString
     @Environment(\.colorScheme) var colorScheme
     @Font var font: FontHelper = .systemFont(ofSize: 14, weight: .regular)
     
@@ -81,8 +82,8 @@ public struct TextEditorPlus: ViewRepresentable {
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    public func makeUIView(context: Context) -> UITextView {
-        let textView = UITextView()
+    public func makeUIView(context: Context) -> TextViewPlus {
+        let textView = TextViewPlus()
         textView.isScrollEnabled = true
         textView.isEditable = true
         textView.font = UIFont.preferredFont(forTextStyle: .body)
@@ -92,18 +93,25 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.layer.borderWidth = 1.0
         textView.layer.borderColor = UIColor.red.cgColor
         textView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
+        textView.placeholderString = placeholderString ?? ""
+        textView.placeholderFont = font
         // 解决边距问题
+        textView.placeholderInsetPadding = insetPadding
         textView.textContainerInset = UIEdgeInsets(top: insetPadding, left: insetPadding, bottom: insetPadding, right: insetPadding)
         return textView
     }
 
-    public func updateUIView(_ uiView: UITextView, context: Context) {
+    public func updateUIView(_ uiView: TextViewPlus, context: Context) {
         uiView.text = text
         uiView.isEditable = isEditable
         uiView.font = font
+        uiView.placeholderFont = font
+        // 解决边距问题
+        uiView.placeholderInsetPadding = insetPadding
         uiView.textContainerInset = UIEdgeInsets(top: insetPadding, left: insetPadding, bottom: insetPadding, right: insetPadding)
         
         uiView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
+        uiView.placeholderString = placeholderString ?? ""
         
         let attributedString = NSMutableAttributedString(string: text)
         let nsColor = colorScheme == .dark ? UIColor.white : UIColor.black
@@ -144,7 +152,7 @@ public struct TextEditorPlus: ViewRepresentable {
         layoutManager.addTextContainer(textContainer)
         
         
-        let textView = NSTextView(frame: .zero, textContainer: textContainer)
+        let textView = TextViewPlus(frame: .zero, textContainer: textContainer)
         textView.autoresizingMask        = .width
         if let bgColor = textViewBackgroundColor {
             textView.backgroundColor         = bgColor
@@ -164,9 +172,11 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.allowsUndo              = true
         textView.delegate = context.coordinator // 设置代理
         textView.font = font
+        textView.placeholderString = placeholderString ?? ""
 
         textView.registerForDraggedTypes([.string])
         // 解决边距问题
+        textView.placeholderInsetPadding = insetPadding
         textView.textContainerInset = NSSize(width: 0, height: insetPadding)
         textView.textContainer?.lineFragmentPadding = insetPadding
         
@@ -177,7 +187,7 @@ public struct TextEditorPlus: ViewRepresentable {
     }
 
     public func updateNSView(_ scrollView: NSScrollView, context: Context) {
-        if let textView = scrollView.documentView as? NSTextView {
+        if let textView = scrollView.documentView as? TextViewPlus {
             textView.string = text
             if context.coordinator.selectedRanges.count > 0 {
                 textView.selectedRanges = context.coordinator.selectedRanges
@@ -195,6 +205,8 @@ public struct TextEditorPlus: ViewRepresentable {
             textView.isEditable = isEditable
             textView.font = font
             
+            textView.placeholderString = placeholderString ?? ""
+            textView.placeholderInsetPadding = insetPadding
             textView.textContainerInset = NSSize(width: 0, height: insetPadding)
             textView.textContainer?.lineFragmentPadding = insetPadding
             
@@ -211,3 +223,56 @@ public struct TextEditorPlus: ViewRepresentable {
     }
     #endif
 }
+
+#if os(OSX)
+@available(macOS 10.15, *)
+class TextViewPlus: NSTextView {
+    var placeholderString: String = "" {
+        didSet {
+            self.needsDisplay = true
+        }
+    }
+    var placeholderInsetPadding: CGFloat = 18
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+        
+        if string.isEmpty && !placeholderString.isEmpty {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .foregroundColor: NSColor.placeholderTextColor,
+                .font: self.font as Any
+            ]
+            let padding = placeholderInsetPadding
+            let rect = CGRect(x: padding, y: padding, width: self.bounds.width - padding, height: self.bounds.height - padding)
+            placeholderString.draw(in: rect, withAttributes: attributes)
+        }
+    }
+}
+#endif
+
+#if os(iOS)
+@available(iOS 13.0, *)
+
+public class TextViewPlus: UITextView {
+    var placeholderString: String = "" {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+    var placeholderFont: FontHelper?
+    var placeholderInsetPadding: CGFloat = 18
+    public override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        
+        if text.isEmpty && !placeholderString.isEmpty {
+            let font = placeholderFont != nil ? placeholderFont : self.font
+            let attributes: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor.placeholderText,
+                .font: font as Any
+            ]
+            let padding = placeholderInsetPadding
+            let rect = CGRect(x: padding + 3, y: padding + 2, width: self.bounds.width - padding, height: self.bounds.height - padding)
+            placeholderString.draw(in: rect, withAttributes: attributes)
+        }
+    }
+}
+#endif
