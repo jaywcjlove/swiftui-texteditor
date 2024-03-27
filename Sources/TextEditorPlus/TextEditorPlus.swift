@@ -187,9 +187,6 @@ public struct TextEditorPlus: ViewRepresentable {
     public func updateNSView(_ scrollView: NSScrollView, context: Context) {
         if let textView = scrollView.documentView as? TextViewPlus {
             textView.string = text
-            if context.coordinator.selectedRanges.count > 0 {
-                textView.selectedRanges = context.coordinator.selectedRanges
-            }
             
             if let bgColor = textViewBackgroundColor {
                 textView.backgroundColor         = bgColor
@@ -216,6 +213,9 @@ public struct TextEditorPlus: ViewRepresentable {
             attributedString.addAttribute(.font, value: font as Any, range: NSRange(location: 0, length: attributedString.length))
             if textViewAttributedString(attributedString) != nil {
                 textView.textStorage?.setAttributedString(attributedString)
+            }
+            if context.coordinator.selectedRanges.count > 0 {
+                textView.selectedRanges = context.coordinator.selectedRanges
             }
         }
     }
