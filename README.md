@@ -3,7 +3,7 @@ SwiftUI TextEditorPlus
 
 [![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-048754?logo=buymeacoffee)](https://jaywcjlove.github.io/#/sponsor)
 [![CI](https://github.com/jaywcjlove/swiftui-texteditor/actions/workflows/ci.yml/badge.svg)](https://github.com/jaywcjlove/swiftui-texteditor/actions/workflows/ci.yml)
-![SwiftUI Support](https://shields.io/badge/SwiftUI-macOS%20v11%20%7C%20iOS%20v13-green?logo=Swift&style=flat)
+[![SwiftUI Support](https://shields.io/badge/SwiftUI-macOS%20v11%20%7C%20iOS%20v13-green?logo=Swift&style=flat)](https://swiftpackageindex.com/jaywcjlove/swiftui-texteditor)
 
 An enhanced version similar to `TextEditor`, aimed at maintaining consistency in its usage across iOS and macOS platforms.
 
