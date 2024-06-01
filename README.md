@@ -65,6 +65,7 @@ Set editor placeholder string:
 
 ```swift
 TextEditorPlus(text: $text)
+    //.font(NSFont(name: "pencontrol", size: 12)!)
     .font(.systemFont(ofSize: CGFloat(Float(fontSize)!), weight: .regular))
     .textSetting("Test placeholder string", for: .placeholderString)
 ```

@@ -35,6 +35,7 @@ extension TextEditorPlus {
     /// 
     /// ```swift
     /// TextEditorPlus(text: $text)
+    ///    .font(NSFont(name: "pencontrol", size: 12)!)
     ///    .font(.systemFont(ofSize: 24, weight: .regular))
     /// ```
     public func font(_ value: FontHelper) -> Self {
