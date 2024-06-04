@@ -61,6 +61,13 @@ TextEditorPlus(text: $text)
   .textSetting(NSColor.red, for: .backgroundColor)
 ```
 
+Set editor text color:
+
+```swift
+TextEditorPlus(text: $text)
+  .textSetting(NSColor.red, for: .textColor)
+```
+
 Set editor placeholder string:
 
 ```swift

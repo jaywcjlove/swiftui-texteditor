@@ -21,6 +21,7 @@ struct TextColorView: View {
                 })
                 .controlSize(.small)
                 .labelsHidden()
+                .padding()
             
             TextEditorPlus(text: $text)
                 .textSetting(NSColor(color), for: .textColor)
