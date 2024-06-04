@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D21058C2C0EAC5D004E0E77 /* TextColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D21058B2C0EAC5D004E0E77 /* TextColorView.swift */; };
 		7D4E4F192BB2E5AF003B3098 /* PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E4F182BB2E5AF003B3098 /* PlaceholderView.swift */; };
 		7D4E4F5F2BB3E4A7003B3098 /* OnChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4E4F5E2BB3E4A7003B3098 /* OnChangeView.swift */; };
 		7DAB5BE42BB0ABA200B5146A /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAB5BE32BB0ABA200B5146A /* ExampleApp.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7D21058B2C0EAC5D004E0E77 /* TextColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextColorView.swift; sourceTree = "<group>"; };
 		7D4E4F182BB2E5AF003B3098 /* PlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderView.swift; sourceTree = "<group>"; };
 		7D4E4F5E2BB3E4A7003B3098 /* OnChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnChangeView.swift; sourceTree = "<group>"; };
 		7DAB5BE02BB0ABA200B5146A /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +102,7 @@
 				7DC471092BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift */,
 				7D4E4F182BB2E5AF003B3098 /* PlaceholderView.swift */,
 				7D4E4F5E2BB3E4A7003B3098 /* OnChangeView.swift */,
+				7D21058B2C0EAC5D004E0E77 /* TextColorView.swift */,
 			);
 			path = Examples;
 			sourceTree = "<group>";
@@ -182,6 +185,7 @@
 				7D4E4F192BB2E5AF003B3098 /* PlaceholderView.swift in Sources */,
 				7DAB5BFA2BB16B0D00B5146A /* FontExampleView.swift in Sources */,
 				7D4E4F5F2BB3E4A7003B3098 /* OnChangeView.swift in Sources */,
+				7D21058C2C0EAC5D004E0E77 /* TextColorView.swift in Sources */,
 				7DC4710A2BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift in Sources */,
 				7DAB5BF82BB0AF9000B5146A /* ExampleView.swift in Sources */,
 			);

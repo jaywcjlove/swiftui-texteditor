@@ -71,6 +71,7 @@ public struct TextEditorPlus: ViewRepresentable {
     @Environment(\.textViewAttributedString) private var textViewAttributedString
     @Environment(\.textViewBackgroundColor) private var textViewBackgroundColor
     @Environment(\.textViewPlaceholderString) private var placeholderString
+    @Environment(\.textViewTextColor) private var textColor
     @Environment(\.colorScheme) var colorScheme
     @Font var font: FontHelper = .systemFont(ofSize: 14, weight: .regular)
     
@@ -166,7 +167,7 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.isVerticallyResizable   = true
         textView.maxSize                 = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         textView.minSize                 = NSSize(width: 0, height: contentSize.height)
-        textView.textColor               = NSColor.labelColor
+        textView.textColor               = textColor
         textView.allowsUndo              = true
         textView.delegate = context.coordinator // 设置代理
         textView.font = font
@@ -204,6 +205,7 @@ public struct TextEditorPlus: ViewRepresentable {
             textView.placeholderInsetPadding = insetPadding
             textView.textContainerInset = NSSize(width: 0, height: insetPadding)
             textView.textContainer?.lineFragmentPadding = insetPadding
+            textView.textColor = textColor
             
             let attributedString = NSMutableAttributedString(string: text)
             let nsColor = colorScheme == .dark ? NSColor.white : NSColor.black
