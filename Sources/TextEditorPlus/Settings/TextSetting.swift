@@ -28,9 +28,6 @@ fileprivate struct TextViewBackgroundColor: EnvironmentKey {
 fileprivate struct TextViewPlaceholderString: EnvironmentKey {
     static var defaultValue: String?
 }
-fileprivate struct TextViewTextColor: EnvironmentKey {
-    static var defaultValue: ViewColor? = ViewColor.textColor
-}
 
 fileprivate struct TextViewAttributedString: EnvironmentKey {
     static var defaultValue: (NSMutableAttributedString) -> NSMutableAttributedString? = { _ in nil }
@@ -59,11 +56,6 @@ extension EnvironmentValues {
         get { self[TextViewPlaceholderString.self] }
         set { self[TextViewPlaceholderString.self] = newValue }
     }
-    /// Text Color
-    var textViewTextColor: ViewColor? {
-        get { self[TextViewTextColor.self] }
-        set { self[TextViewTextColor.self] = newValue }
-    }
 }
 
 public enum TextViewComponent {
@@ -75,8 +67,6 @@ public enum TextViewComponent {
     case backgroundColor
     /// Set editor placeholder
     case placeholderString
-    /// Set editor text color
-    case textColor
 }
 
 @available(iOS 13.0, macOS 10.15, *)
@@ -116,8 +106,6 @@ public extension View {
                 environment(\.textViewInsetPadding, value as! CGFloat)
             case .backgroundColor:
                 environment(\.textViewBackgroundColor, value as! ViewColor?)
-            case .textColor:
-                environment(\.textViewTextColor, value as! ViewColor?)
             case .placeholderString:
                 environment(\.textViewPlaceholderString, value as! String?)
         }
