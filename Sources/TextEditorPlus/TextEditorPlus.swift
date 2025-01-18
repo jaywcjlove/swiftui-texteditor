@@ -133,6 +133,7 @@ public struct TextEditorPlus: ViewRepresentable {
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalRuler = false
         scrollView.autoresizingMask = [.width, .height]
+        scrollView.autohidesScrollers = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         let contentSize = scrollView.contentSize
         let textStorage = NSTextStorage()
