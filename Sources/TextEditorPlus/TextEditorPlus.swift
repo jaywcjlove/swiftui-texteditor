@@ -172,6 +172,13 @@ public struct TextEditorPlus: ViewRepresentable {
         uiView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         uiView.placeholderString = placeholderString ?? ""
         
+        // 强制重新绘制以确保边距一致性
+        uiView.setNeedsDisplay()
+        
+        // 强制布局更新以确保textContainerInset立即生效
+        uiView.setNeedsLayout()
+        uiView.layoutIfNeeded()
+        
         // 只有在非属性字符串模式下才应用 textViewAttributedString 处理
         if !isAttributedTextMode && !text.isEmpty {
             let attributedString = NSMutableAttributedString(string: text)
@@ -254,10 +261,11 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.isAutomaticTextCompletionEnabled = false
 
         textView.registerForDraggedTypes([.string])
+        print("insetPadding", insetPadding)
         // 解决边距问题
         textView.placeholderInsetPadding = insetPadding
-        textView.textContainerInset = NSSize(width: 0, height: insetPadding)
-        textView.textContainer?.lineFragmentPadding = insetPadding
+        textView.textContainerInset = NSSize(width: insetPadding, height: insetPadding)
+        textView.textContainer?.lineFragmentPadding = 0  // 避免双重边距
 
         scrollView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -293,8 +301,11 @@ public struct TextEditorPlus: ViewRepresentable {
             }
             textView.placeholderString = placeholderString ?? ""
             textView.placeholderInsetPadding = insetPadding
-            textView.textContainerInset = NSSize(width: 0, height: insetPadding)
-            textView.textContainer?.lineFragmentPadding = insetPadding
+            textView.textContainerInset = NSSize(width: insetPadding, height: insetPadding)
+            textView.textContainer?.lineFragmentPadding = 0  // 避免双重边距
+            
+            // 强制重新绘制以确保边距一致性
+            textView.needsDisplay = true
             
             // 只有在非属性字符串模式下才应用 textViewAttributedString 处理
             if !isAttributedTextMode && !text.isEmpty {
@@ -323,7 +334,11 @@ class TextViewPlus: NSTextView {
             self.needsDisplay = true
         }
     }
-    var placeholderInsetPadding: CGFloat = 18
+    var placeholderInsetPadding: CGFloat = 18 {
+        didSet {
+            self.needsDisplay = true
+        }
+    }
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         
@@ -334,7 +349,8 @@ class TextViewPlus: NSTextView {
                 .font: self.font as Any
             ]
             let padding = placeholderInsetPadding
-            let rect = CGRect(x: padding, y: padding, width: self.bounds.width - padding, height: self.bounds.height - padding)
+            // 与 textContainerInset 保持一致的边距
+            let rect = CGRect(x: padding, y: padding, width: self.bounds.width - padding * 2, height: self.bounds.height - padding * 2)
             placeholderString.draw(in: rect, withAttributes: attributes)
         }
     }
@@ -350,8 +366,16 @@ public class TextViewPlus: UITextView {
             setNeedsDisplay()
         }
     }
-    var placeholderFont: FontHelper?
-    var placeholderInsetPadding: CGFloat = 18
+    var placeholderFont: FontHelper? {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+    var placeholderInsetPadding: CGFloat = 18 {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
         
@@ -363,7 +387,8 @@ public class TextViewPlus: UITextView {
                 .font: font as Any
             ]
             let padding = placeholderInsetPadding
-            let rect = CGRect(x: padding + 3, y: padding + 2, width: self.bounds.width - padding, height: self.bounds.height - padding)
+            // 与 textContainerInset 保持一致的边距
+            let rect = CGRect(x: padding, y: padding, width: self.bounds.width - padding * 2, height: self.bounds.height - padding * 2)
             placeholderString.draw(in: rect, withAttributes: attributes)
         }
     }

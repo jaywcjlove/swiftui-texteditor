@@ -47,23 +47,13 @@ struct TextDiffView: View {
                 let prompt = LocalizedStringKey("Paste your text here").localizedString(locale: locale)
                TextEditorPlus(text: $vm.source)
                    .font(.systemFont(ofSize: 14, weight: .regular))
-                   .textSetting(CGFloat(10), for: .insetPadding)
+                   .textSetting(CGFloat(5), for: .insetPadding)
                    .textSetting(prompt, for: .placeholderString)
                    .frame(minHeight: 120)
                    .focused($input, equals: .text)
                    .onChange(of: vm.source, initial: true) { oldValue, newValue in
                        if input == .text {
-                           loading = true
-                           DispatchQueue.global(qos: .userInitiated).async {
-                               guard let result = updateAttributedString(source: vm.source, target: vm.target) else {
-                                   loading = false
-                                   return
-                               }
-                               DispatchQueue.main.async {
-                                   vm.attributedString = result as! NSMutableAttributedString
-                                   loading = false
-                               }
-                           }
+                           update()
                        }
                    }
                 TextEditorPlus(text: $vm.target)
@@ -74,17 +64,7 @@ struct TextDiffView: View {
                     .focused($input, equals: .output)
                     .onChange(of: vm.target, initial: true) { oldValue, newValue in
                         if input == .output {
-                            loading = true
-                            DispatchQueue.global(qos: .userInitiated).async {
-                                guard let result = updateAttributedString(source: vm.source, target: vm.target) else {
-                                    loading = false
-                                    return
-                                }
-                                DispatchQueue.main.async {
-                                    vm.attributedString = result as! NSMutableAttributedString
-                                    loading = false
-                                }
-                            }
+                            update()
                         }
                     }
                 
@@ -97,6 +77,22 @@ struct TextDiffView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear() {
+            update()
+        }
+    }
+    func update() {
+        loading = true
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let result = updateAttributedString(source: vm.source, target: vm.target) else {
+                loading = false
+                return
+            }
+            DispatchQueue.main.async {
+                vm.attributedString = result as! NSMutableAttributedString
+                loading = false
+            }
+        }
     }
     func updateAttributedString(source: String, target: String) -> NSAttributedString? {
         // 创建一个简单的测试文本，确保有内容
