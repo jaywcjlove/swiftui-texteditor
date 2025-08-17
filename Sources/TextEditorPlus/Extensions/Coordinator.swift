@@ -14,6 +14,7 @@ extension TextEditorPlus {
     public class Coordinator: NSObject, UITextViewDelegate {
         var parent: TextEditorPlus
         var selectedRanges: [NSValue] = []
+        private var debounceTimer: Timer?
         
         init(_ parent: TextEditorPlus) {
             self.parent = parent
@@ -25,11 +26,18 @@ extension TextEditorPlus {
         }
         
         public func textViewDidChange(_ textView: UITextView) {
-            self.parent.text = textView.text
-            self.selectedRanges = textView.selectedTextRange != nil ? [NSValue(range: textView.selectedRange)] : []
+            // 对于大文本，使用防抖机制减少频繁更新
+            debounceTimer?.invalidate()
+            debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.parent.text = textView.text
+                    self?.selectedRanges = textView.selectedTextRange != nil ? [NSValue(range: textView.selectedRange)] : []
+                }
+            }
         }
         
         public func textViewDidEndEditing(_ textView: UITextView) {
+            debounceTimer?.invalidate()
             self.parent.text = textView.text
             self.selectedRanges = textView.selectedTextRange != nil ? [NSValue(range: textView.selectedRange)] : []
         }
@@ -39,6 +47,7 @@ extension TextEditorPlus {
     public class Coordinator: NSObject, NSTextViewDelegate {
         var parent: TextEditorPlus
         var selectedRanges: [NSValue] = []
+        private var debounceTimer: Timer?
         
         init(_ parent: TextEditorPlus) {
             self.parent = parent
@@ -54,15 +63,21 @@ extension TextEditorPlus {
             guard let textView = notification.object as? NSTextView else {
                 return
             }
-            self.parent.text = textView.string
-            self.selectedRanges = textView.selectedRanges
+            // 对于大文本，使用防抖机制减少频繁更新
+            debounceTimer?.invalidate()
+            debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.parent.text = textView.string
+                    self?.selectedRanges = textView.selectedRanges
+                }
+            }
         }
         
         public func textDidEndEditing(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else {
                 return
             }
-            
+            debounceTimer?.invalidate()
             self.parent.text = textView.string
             self.selectedRanges = textView.selectedRanges
         }

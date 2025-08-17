@@ -15,7 +15,6 @@ struct TextColorView: View {
     @State var color: Color = .red
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            
             ColorPicker(selection: $color, supportsOpacity: true, label: {
                     
                 })
@@ -51,6 +50,7 @@ struct TextColorView: View {
     TextColorView()
 }
 
+#if os(OSX)
 extension NSTextView {
     open override var frame: CGRect {
         didSet {
@@ -61,3 +61,4 @@ extension NSTextView {
         }
     }
 }
+#endif

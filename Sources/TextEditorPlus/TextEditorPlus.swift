@@ -93,6 +93,12 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         textView.placeholderString = placeholderString ?? ""
         textView.placeholderFont = font
+        // 关闭自动拼写、自动更正等特性
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.smartDashesType = .no
+        textView.smartQuotesType = .no
+        textView.smartInsertDeleteType = .no
         // 解决边距问题
         textView.placeholderInsetPadding = insetPadding
         textView.textContainerInset = UIEdgeInsets(top: insetPadding, left: insetPadding, bottom: insetPadding, right: insetPadding)
@@ -100,25 +106,29 @@ public struct TextEditorPlus: ViewRepresentable {
     }
 
     public func updateUIView(_ uiView: TextViewPlus, context: Context) {
-        uiView.text = text
+        // 只在内容变化时赋值，避免大文本频繁刷新
+        if uiView.text != text {
+            uiView.text = text
+        }
         uiView.isEditable = isEditable
-        uiView.font = font
+        if uiView.font != font {
+            uiView.font = font
+        }
         uiView.placeholderFont = font
         // 解决边距问题
         uiView.placeholderInsetPadding = insetPadding
         uiView.textContainerInset = UIEdgeInsets(top: insetPadding, left: insetPadding, bottom: insetPadding, right: insetPadding)
-        
         uiView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         uiView.placeholderString = placeholderString ?? ""
-        
-        let attributedString = NSMutableAttributedString(string: text)
-        let nsColor = colorScheme == .dark ? UIColor.white : UIColor.black
-        // 默认设置背景
-        attributedString.addAttribute(.foregroundColor, value: nsColor, range: NSRange(location: 0, length: attributedString.length))
-        // 设置文字大小
-        attributedString.addAttribute(.font, value: font as Any, range: NSRange(location: 0, length: attributedString.length))
-        if textViewAttributedString(attributedString) != nil {
-            uiView.textStorage.setAttributedString(attributedString)
+        // 只在需要时重建 attributedString
+        if !text.isEmpty {
+            let attributedString = NSMutableAttributedString(string: text)
+            let nsColor = colorScheme == .dark ? UIColor.white : UIColor.black
+            attributedString.addAttribute(.foregroundColor, value: nsColor, range: NSRange(location: 0, length: attributedString.length))
+            attributedString.addAttribute(.font, value: font as Any, range: NSRange(location: 0, length: attributedString.length))
+            if textViewAttributedString(attributedString) != nil {
+                uiView.textStorage.setAttributedString(attributedString)
+            }
         }
     }
     #elseif os(OSX)
@@ -158,7 +168,6 @@ public struct TextEditorPlus: ViewRepresentable {
             textView.drawsBackground         = true
         } else {
             textView.backgroundColor         = NSColor.clear
-            // 指示接收者是否绘制其背景
             textView.drawsBackground         = false
         }
         textView.isEditable              = isEditable
@@ -171,48 +180,59 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.delegate = context.coordinator // 设置代理
         textView.font = font
         textView.placeholderString = placeholderString ?? ""
+        // 关闭自动拼写检查等特性
+        textView.isContinuousSpellCheckingEnabled = false
+        textView.isAutomaticSpellingCorrectionEnabled = false
+        textView.isGrammarCheckingEnabled = false
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled = false
+        textView.isAutomaticTextReplacementEnabled = false
+        textView.isAutomaticLinkDetectionEnabled = false
+        textView.isAutomaticDataDetectionEnabled = false
+        textView.isAutomaticTextCompletionEnabled = false
 
         textView.registerForDraggedTypes([.string])
         // 解决边距问题
         textView.placeholderInsetPadding = insetPadding
         textView.textContainerInset = NSSize(width: 0, height: insetPadding)
         textView.textContainer?.lineFragmentPadding = insetPadding
-        
+
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         scrollView.documentView = textView
         return scrollView
     }
 
     public func updateNSView(_ scrollView: NSScrollView, context: Context) {
         if let textView = scrollView.documentView as? TextViewPlus {
-            textView.string = text
-            
+            // 只在内容变化时赋值，避免大文本频繁刷新
+            if textView.string != text {
+                textView.string = text
+            }
             if let bgColor = textViewBackgroundColor {
                 textView.backgroundColor         = bgColor
                 textView.drawsBackground         = true
             } else {
                 textView.backgroundColor         = NSColor.clear
-                // 指示接收者是否绘制其背景
                 textView.drawsBackground         = false
             }
-            
             textView.isEditable = isEditable
-            textView.font = font
-            
+            if textView.font != font {
+                textView.font = font
+            }
             textView.placeholderString = placeholderString ?? ""
             textView.placeholderInsetPadding = insetPadding
             textView.textContainerInset = NSSize(width: 0, height: insetPadding)
             textView.textContainer?.lineFragmentPadding = insetPadding
-            
-            let attributedString = NSMutableAttributedString(string: text)
-            let nsColor = colorScheme == .dark ? NSColor.white : NSColor.black
-            // 默认设置背景
-            attributedString.addAttribute(.foregroundColor, value: nsColor, range: NSRange(location: 0, length: attributedString.length))
-            // 设置文字大小
-            attributedString.addAttribute(.font, value: font as Any, range: NSRange(location: 0, length: attributedString.length))
-            if textViewAttributedString(attributedString) != nil {
-                textView.textStorage?.setAttributedString(attributedString)
+            // 只在需要时重建 attributedString
+            if !text.isEmpty {
+                let attributedString = NSMutableAttributedString(string: text)
+                let nsColor = colorScheme == .dark ? NSColor.white : NSColor.black
+                attributedString.addAttribute(.foregroundColor, value: nsColor, range: NSRange(location: 0, length: attributedString.length))
+                attributedString.addAttribute(.font, value: font as Any, range: NSRange(location: 0, length: attributedString.length))
+                if textViewAttributedString(attributedString) != nil {
+                    textView.textStorage?.setAttributedString(attributedString)
+                }
             }
             if context.coordinator.selectedRanges.count > 0 {
                 textView.selectedRanges = context.coordinator.selectedRanges
