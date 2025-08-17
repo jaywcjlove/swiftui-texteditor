@@ -261,7 +261,6 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.isAutomaticTextCompletionEnabled = false
 
         textView.registerForDraggedTypes([.string])
-        print("insetPadding", insetPadding)
         // 解决边距问题
         textView.placeholderInsetPadding = insetPadding
         textView.textContainerInset = NSSize(width: insetPadding, height: insetPadding)
