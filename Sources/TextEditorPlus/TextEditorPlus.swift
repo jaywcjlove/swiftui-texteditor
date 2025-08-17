@@ -66,6 +66,8 @@ private typealias ViewRepresentable = UIViewRepresentable
 @available(iOS 13.0, macOS 10.15, *)
 public struct TextEditorPlus: ViewRepresentable {
     @Binding var text: String
+    @Binding var attributedText: NSMutableAttributedString?
+    internal var isAttributedTextMode: Bool
     @Environment(\.textViewIsEditable) private var isEditable
     @Environment(\.textViewInsetPadding) private var insetPadding
     @Environment(\.textViewAttributedString) private var textViewAttributedString
@@ -76,6 +78,37 @@ public struct TextEditorPlus: ViewRepresentable {
     
     public init(text: Binding<String>) {
         self._text = text
+        self._attributedText = .constant(nil)
+        self.isAttributedTextMode = false
+    }
+    
+    public init(text: Binding<NSMutableAttributedString>) {
+        self._text = .constant("")
+        self._attributedText = Binding<NSMutableAttributedString?>(
+            get: { text.wrappedValue },
+            set: { newValue in
+                if let newValue = newValue {
+                    text.wrappedValue = newValue
+                }
+            }
+        )
+        self.isAttributedTextMode = true
+    }
+    
+    private var currentText: String {
+        if isAttributedTextMode {
+            return attributedText?.string ?? ""
+        } else {
+            return text
+        }
+    }
+    
+    private var currentAttributedText: NSMutableAttributedString? {
+        if isAttributedTextMode {
+            return attributedText
+        } else {
+            return nil
+        }
     }
     
     #if os(iOS)
@@ -88,7 +121,16 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.isEditable = true
         textView.font = UIFont.preferredFont(forTextStyle: .body)
         textView.delegate = context.coordinator
-        textView.text = text
+        
+        // 设置文本内容
+        if isAttributedTextMode {
+            if let attributedText = attributedText {
+                textView.attributedText = attributedText
+            }
+        } else {
+            textView.text = text
+        }
+        
         textView.font = font
         textView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         textView.placeholderString = placeholderString ?? ""
@@ -106,10 +148,19 @@ public struct TextEditorPlus: ViewRepresentable {
     }
 
     public func updateUIView(_ uiView: TextViewPlus, context: Context) {
-        // 只在内容变化时赋值，避免大文本频繁刷新
-        if uiView.text != text {
-            uiView.text = text
+        // 根据模式更新文本内容
+        if isAttributedTextMode {
+            if let attributedText = attributedText, 
+               uiView.attributedText.string != attributedText.string {
+                uiView.attributedText = attributedText
+            }
+        } else {
+            // 只在内容变化时赋值，避免大文本频繁刷新
+            if uiView.text != text {
+                uiView.text = text
+            }
         }
+        
         uiView.isEditable = isEditable
         if uiView.font != font {
             uiView.font = font
@@ -120,8 +171,9 @@ public struct TextEditorPlus: ViewRepresentable {
         uiView.textContainerInset = UIEdgeInsets(top: insetPadding, left: insetPadding, bottom: insetPadding, right: insetPadding)
         uiView.backgroundColor = textViewBackgroundColor ?? UIColor.clear
         uiView.placeholderString = placeholderString ?? ""
-        // 只在需要时重建 attributedString
-        if !text.isEmpty {
+        
+        // 只有在非属性字符串模式下才应用 textViewAttributedString 处理
+        if !isAttributedTextMode && !text.isEmpty {
             let attributedString = NSMutableAttributedString(string: text)
             let nsColor = colorScheme == .dark ? UIColor.white : UIColor.black
             attributedString.addAttribute(.foregroundColor, value: nsColor, range: NSRange(location: 0, length: attributedString.length))
@@ -180,6 +232,16 @@ public struct TextEditorPlus: ViewRepresentable {
         textView.delegate = context.coordinator // 设置代理
         textView.font = font
         textView.placeholderString = placeholderString ?? ""
+        
+        // 设置文本内容
+        if isAttributedTextMode {
+            if let attributedText = attributedText {
+                textView.textStorage?.setAttributedString(attributedText)
+            }
+        } else {
+            textView.string = text
+        }
+        
         // 关闭自动拼写检查等特性
         textView.isContinuousSpellCheckingEnabled = false
         textView.isAutomaticSpellingCorrectionEnabled = false
@@ -205,10 +267,19 @@ public struct TextEditorPlus: ViewRepresentable {
 
     public func updateNSView(_ scrollView: NSScrollView, context: Context) {
         if let textView = scrollView.documentView as? TextViewPlus {
-            // 只在内容变化时赋值，避免大文本频繁刷新
-            if textView.string != text {
-                textView.string = text
+            // 根据模式更新文本内容
+            if isAttributedTextMode {
+                if let attributedText = attributedText,
+                   textView.textStorage?.string != attributedText.string {
+                    textView.textStorage?.setAttributedString(attributedText)
+                }
+            } else {
+                // 只在内容变化时赋值，避免大文本频繁刷新
+                if textView.string != text {
+                    textView.string = text
+                }
             }
+            
             if let bgColor = textViewBackgroundColor {
                 textView.backgroundColor         = bgColor
                 textView.drawsBackground         = true
@@ -224,8 +295,9 @@ public struct TextEditorPlus: ViewRepresentable {
             textView.placeholderInsetPadding = insetPadding
             textView.textContainerInset = NSSize(width: 0, height: insetPadding)
             textView.textContainer?.lineFragmentPadding = insetPadding
-            // 只在需要时重建 attributedString
-            if !text.isEmpty {
+            
+            // 只有在非属性字符串模式下才应用 textViewAttributedString 处理
+            if !isAttributedTextMode && !text.isEmpty {
                 let attributedString = NSMutableAttributedString(string: text)
                 let nsColor = colorScheme == .dark ? NSColor.white : NSColor.black
                 attributedString.addAttribute(.foregroundColor, value: nsColor, range: NSRange(location: 0, length: attributedString.length))
@@ -234,6 +306,7 @@ public struct TextEditorPlus: ViewRepresentable {
                     textView.textStorage?.setAttributedString(attributedString)
                 }
             }
+            
             if context.coordinator.selectedRanges.count > 0 {
                 textView.selectedRanges = context.coordinator.selectedRanges
             }
@@ -254,7 +327,8 @@ class TextViewPlus: NSTextView {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         
-        if string.isEmpty && !placeholderString.isEmpty {
+        let shouldShowPlaceholder = string.isEmpty && textStorage?.length == 0
+        if shouldShowPlaceholder && !placeholderString.isEmpty {
             let attributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: NSColor.placeholderTextColor,
                 .font: self.font as Any
@@ -281,7 +355,8 @@ public class TextViewPlus: UITextView {
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
         
-        if text.isEmpty && !placeholderString.isEmpty {
+        let shouldShowPlaceholder = text.isEmpty && attributedText.length == 0
+        if shouldShowPlaceholder && !placeholderString.isEmpty {
             let font = placeholderFont != nil ? placeholderFont : self.font
             let attributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: UIColor.placeholderText,

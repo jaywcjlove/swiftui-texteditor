@@ -22,6 +22,7 @@ struct SideBar: Identifiable, Hashable, Equatable {
 
 struct ContentView: View {
     @State private var examples = [
+        SideBar(name: "Text Diff Test", view: AnyView(TextDiffView())),
         SideBar(name: "Text Color Test", view: AnyView(TextColorView())),
         SideBar(name: "Change Event Test", view: AnyView(OnChangeView())),
         SideBar(name: "Placeholder Example", view: AnyView(PlaceholderView())),

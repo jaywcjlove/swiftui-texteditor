@@ -8,7 +8,6 @@
 import SwiftUI
 import TextEditorPlus
 
-
 #if os(OSX)
     import AppKit
     public typealias ViewColor = NSColor
@@ -21,36 +20,79 @@ struct MutableAttributedStringExampleView: View {
     @State var text = """
     Hello World
     """
+    @State var attributedText = NSMutableAttributedString(string: """
+    This is a NSMutableAttributedString example.
+    You can edit this text directly.
+    The formatting will be preserved!
+    """)
     @State var pattern: String = "[a-z]*"
     @State var isEditable = true
+    @State var useAttributedString = false
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                TextField("", text: $pattern)
+                TextField("Pattern", text: $pattern).labelsHidden()
                 Button(isEditable ? "Disable Editing" : "Edit") {
                     isEditable.toggle()
+                }
+                Button(useAttributedString ? "Use String" : "Use AttributedString") {
+                    useAttributedString.toggle()
                 }
             }
             .padding()
             
-            TextEditorPlus(text: $text)
-                .textSetting(isEditable, for: .isEditable)
-                .textViewAttributedString(action: { val in
-                    if isValidRegex(pattern) {
-                        val.matchText(pattern: pattern)
-                        
-                        
-                        let style = NSMutableParagraphStyle()
-                        style.lineSpacing = 5
-                        style.lineHeightMultiple = 1.2
-                        
-                        val.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: val.length))
-                        return val
+            if useAttributedString {
+                // 使用 NSMutableAttributedString 绑定
+                TextEditorPlus(text: $attributedText)
+                    .textSetting(isEditable, for: .isEditable)
+                    .onAppear {
+                        setupAttributedText()
                     }
-                    return nil
-                })
+            } else {
+                // 使用 String 绑定
+                TextEditorPlus(text: $text)
+                    .textSetting(isEditable, for: .isEditable)
+                    .textViewAttributedString(action: { val in
+                        if isValidRegex(pattern) {
+                            val.matchText(pattern: pattern)
+                            let style = NSMutableParagraphStyle()
+                            style.lineSpacing = 5
+                            style.lineHeightMultiple = 1.2
+                            
+                            val.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: val.length))
+                            return val
+                        }
+                        return nil
+                    })
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+    
+    func setupAttributedText() {
+        let fullRange = NSRange(location: 0, length: attributedText.length)
+        
+        // 设置基础字体
+        #if os(iOS)
+        attributedText.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: fullRange)
+        #else
+        attributedText.addAttribute(.font, value: NSFont.systemFont(ofSize: 16), range: fullRange)
+        #endif
+        
+        // 高亮 "NSMutableAttributedString" 文字
+        let highlightText = "NSMutableAttributedString"
+        let highlightRange = (attributedText.string as NSString).range(of: highlightText)
+        if highlightRange.location != NSNotFound {
+            attributedText.addAttribute(.backgroundColor, value: ViewColor.systemBlue, range: highlightRange)
+            attributedText.addAttribute(.foregroundColor, value: ViewColor.white, range: highlightRange)
+        }
+        
+        // 设置段落样式
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 3
+        paragraphStyle.paragraphSpacing = 8
+        attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
     }
     func isValidRegex(_ pattern: String) -> Bool {
         do {

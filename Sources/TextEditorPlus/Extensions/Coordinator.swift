@@ -21,7 +21,13 @@ extension TextEditorPlus {
         }
         
         public func textViewDidBeginEditing(_ textView: UITextView) {
-            self.parent.text = textView.text
+            if parent.isAttributedTextMode {
+                if let attributedText = parent.attributedText {
+                    attributedText.setAttributedString(textView.attributedText)
+                }
+            } else {
+                self.parent.text = textView.text
+            }
             self.selectedRanges = textView.selectedTextRange != nil ? [NSValue(range: textView.selectedRange)] : []
         }
         
@@ -30,7 +36,15 @@ extension TextEditorPlus {
             debounceTimer?.invalidate()
             debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
                 DispatchQueue.main.async {
-                    self?.parent.text = textView.text
+                    if let parent = self?.parent {
+                        if parent.isAttributedTextMode {
+                            if let attributedText = parent.attributedText {
+                                attributedText.setAttributedString(textView.attributedText)
+                            }
+                        } else {
+                            parent.text = textView.text
+                        }
+                    }
                     self?.selectedRanges = textView.selectedTextRange != nil ? [NSValue(range: textView.selectedRange)] : []
                 }
             }
@@ -38,7 +52,13 @@ extension TextEditorPlus {
         
         public func textViewDidEndEditing(_ textView: UITextView) {
             debounceTimer?.invalidate()
-            self.parent.text = textView.text
+            if parent.isAttributedTextMode {
+                if let attributedText = parent.attributedText {
+                    attributedText.setAttributedString(textView.attributedText)
+                }
+            } else {
+                self.parent.text = textView.text
+            }
             self.selectedRanges = textView.selectedTextRange != nil ? [NSValue(range: textView.selectedRange)] : []
         }
     }
@@ -56,7 +76,14 @@ extension TextEditorPlus {
             guard let textView = notification.object as? NSTextView else {
                 return
             }
-            self.parent.text = textView.string
+            if parent.isAttributedTextMode {
+                if let attributedText = parent.attributedText,
+                   let textStorage = textView.textStorage {
+                    attributedText.setAttributedString(textStorage)
+                }
+            } else {
+                self.parent.text = textView.string
+            }
             self.selectedRanges = textView.selectedRanges
         }
         public func textDidChange(_ notification: Notification) {
@@ -67,7 +94,16 @@ extension TextEditorPlus {
             debounceTimer?.invalidate()
             debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
                 DispatchQueue.main.async {
-                    self?.parent.text = textView.string
+                    if let parent = self?.parent {
+                        if parent.isAttributedTextMode {
+                            if let attributedText = parent.attributedText,
+                               let textStorage = textView.textStorage {
+                                attributedText.setAttributedString(textStorage)
+                            }
+                        } else {
+                            parent.text = textView.string
+                        }
+                    }
                     self?.selectedRanges = textView.selectedRanges
                 }
             }
@@ -78,7 +114,14 @@ extension TextEditorPlus {
                 return
             }
             debounceTimer?.invalidate()
-            self.parent.text = textView.string
+            if parent.isAttributedTextMode {
+                if let attributedText = parent.attributedText,
+                   let textStorage = textView.textStorage {
+                    attributedText.setAttributedString(textStorage)
+                }
+            } else {
+                self.parent.text = textView.string
+            }
             self.selectedRanges = textView.selectedRanges
         }
     }

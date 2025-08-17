@@ -1,6 +1,15 @@
 {
-  "originHash" : "c9e6788cb43892c2e38ad23af1572980f71e9a7c276da41b4ac1b2a0c66ad0be",
+  "originHash" : "a12562b6ce2bd67ab8f2b704d14197ccd192175e64c7d46a2f3f154ff22ea2c4",
   "pins" : [
+    {
+      "identity" : "sdifft",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wzxha/Sdifft.git",
+      "state" : {
+        "revision" : "6c39e659b07c0530c67721e00de023afd57aea00",
+        "version" : "2.1.0"
+      }
+    },
     {
       "identity" : "swift-docc-plugin",
       "kind" : "remoteSourceControl",

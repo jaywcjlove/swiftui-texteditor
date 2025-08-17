@@ -18,6 +18,8 @@
 		7DAB5BF82BB0AF9000B5146A /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAB5BF72BB0AF8F00B5146A /* ExampleView.swift */; };
 		7DAB5BFA2BB16B0D00B5146A /* FontExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAB5BF92BB16B0D00B5146A /* FontExampleView.swift */; };
 		7DC4710A2BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC471092BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift */; };
+		E045F2672E51B8BE009F7AE0 /* Sdifft in Frameworks */ = {isa = PBXBuildFile; productRef = E045F2662E51B8BE009F7AE0 /* Sdifft */; };
+		E045F2692E51B8DC009F7AE0 /* TextDiffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E045F2682E51B8D5009F7AE0 /* TextDiffView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,7 @@
 		7DAB5BF72BB0AF8F00B5146A /* ExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleView.swift; sourceTree = "<group>"; };
 		7DAB5BF92BB16B0D00B5146A /* FontExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontExampleView.swift; sourceTree = "<group>"; };
 		7DC471092BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutableAttributedStringExampleView.swift; sourceTree = "<group>"; };
+		E045F2682E51B8D5009F7AE0 /* TextDiffView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDiffView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E045F2672E51B8BE009F7AE0 /* Sdifft in Frameworks */,
 				7DAB5BF52BB0ACAE00B5146A /* TextEditorPlus in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -97,6 +101,7 @@
 		7DAB5BF62BB0AF5000B5146A /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				E045F2682E51B8D5009F7AE0 /* TextDiffView.swift */,
 				7DAB5BF72BB0AF8F00B5146A /* ExampleView.swift */,
 				7DAB5BF92BB16B0D00B5146A /* FontExampleView.swift */,
 				7DC471092BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift */,
@@ -125,6 +130,7 @@
 			name = Example;
 			packageProductDependencies = (
 				7DAB5BF42BB0ACAE00B5146A /* TextEditorPlus */,
+				E045F2662E51B8BE009F7AE0 /* Sdifft */,
 			);
 			productName = Example;
 			productReference = 7DAB5BE02BB0ABA200B5146A /* Example.app */;
@@ -154,6 +160,9 @@
 				Base,
 			);
 			mainGroup = 7DAB5BD72BB0ABA200B5146A;
+			packageReferences = (
+				E045F2652E51B8BE009F7AE0 /* XCRemoteSwiftPackageReference "Sdifft" */,
+			);
 			productRefGroup = 7DAB5BE12BB0ABA200B5146A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -184,6 +193,7 @@
 				7DAB5BE42BB0ABA200B5146A /* ExampleApp.swift in Sources */,
 				7D4E4F192BB2E5AF003B3098 /* PlaceholderView.swift in Sources */,
 				7DAB5BFA2BB16B0D00B5146A /* FontExampleView.swift in Sources */,
+				E045F2692E51B8DC009F7AE0 /* TextDiffView.swift in Sources */,
 				7D4E4F5F2BB3E4A7003B3098 /* OnChangeView.swift in Sources */,
 				7D21058C2C0EAC5D004E0E77 /* TextColorView.swift in Sources */,
 				7DC4710A2BB1FCAF00CE7718 /* MutableAttributedStringExampleView.swift in Sources */,
@@ -409,10 +419,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		E045F2652E51B8BE009F7AE0 /* XCRemoteSwiftPackageReference "Sdifft" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wzxha/Sdifft.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		7DAB5BF42BB0ACAE00B5146A /* TextEditorPlus */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TextEditorPlus;
+		};
+		E045F2662E51B8BE009F7AE0 /* Sdifft */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E045F2652E51B8BE009F7AE0 /* XCRemoteSwiftPackageReference "Sdifft" */;
+			productName = Sdifft;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

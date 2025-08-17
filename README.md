@@ -129,6 +129,74 @@ TextEditorPlus(text: $text)
     })
 ````
 
+## NSMutableAttributedString Support
+
+You can now use `TextEditorPlus` with `NSMutableAttributedString` for more advanced text formatting:
+
+```swift
+import TextEditorPlus
+
+struct ContentView: View {
+    @State var attributedText = NSMutableAttributedString(string: """
+        This is an example of NSMutableAttributedString.
+        You can apply rich text formatting directly!
+        """)
+    
+    var body: some View {
+        VStack {
+            // Using NSMutableAttributedString binding
+            TextEditorPlus(text: $attributedText)
+                .textSetting(true, for: .isEditable)
+                .onAppear {
+                    setupAttributedText()
+                }
+            
+            Button("Add Formatting") {
+                applyFormatting()
+            }
+        }
+    }
+    
+    func setupAttributedText() {
+        let fullRange = NSRange(location: 0, length: attributedText.length)
+        
+        // Set base font
+        #if os(iOS)
+        attributedText.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: fullRange)
+        #else
+        attributedText.addAttribute(.font, value: NSFont.systemFont(ofSize: 16), range: fullRange)
+        #endif
+        
+        // Apply paragraph style
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 3
+        paragraphStyle.paragraphSpacing = 8
+        attributedText.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
+    }
+    
+    func applyFormatting() {
+        let highlightText = "NSMutableAttributedString"
+        let range = (attributedText.string as NSString).range(of: highlightText)
+        if range.location != NSNotFound {
+            #if os(iOS)
+            attributedText.addAttribute(.backgroundColor, value: UIColor.systemBlue, range: range)
+            attributedText.addAttribute(.foregroundColor, value: UIColor.white, range: range)
+            #else
+            attributedText.addAttribute(.backgroundColor, value: NSColor.systemBlue, range: range)
+            attributedText.addAttribute(.foregroundColor, value: NSColor.white, range: range)
+            #endif
+        }
+    }
+}
+```
+
+The `TextEditorPlus` now supports both `String` and `NSMutableAttributedString` bindings:
+
+- `TextEditorPlus(text: $text)` - for `String` binding  
+- `TextEditorPlus(text: $attributedText)` - for `NSMutableAttributedString` binding
+
+When using `NSMutableAttributedString`, the text view will preserve all formatting attributes and allow direct manipulation of the attributed string.
+
 ## License
 
 Licensed under the MIT License.
